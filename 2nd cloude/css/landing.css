@@ -1,0 +1,151 @@
+/* css/landing.css */
+
+/* ── NAV ─────────────────────────────────────────────── */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(10,13,20,0.85); backdrop-filter: blur(16px);
+  border-bottom: 1px solid transparent; transition: border-color 0.3s;
+}
+.nav.scrolled { border-bottom-color: var(--border); }
+.nav-inner {
+  max-width: 1100px; margin: 0 auto; padding: 14px 24px;
+  display: flex; align-items: center; gap: 20px;
+}
+.nav-logo { display: flex; align-items: center; gap: 9px; font-family: var(--font-display); font-weight: 700; font-size: 1.05rem; }
+.nav-logo-mark {
+  width: 30px; height: 30px; border-radius: 8px; background: var(--grad-primary);
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-weight: 800; font-size: 0.9rem; flex-shrink: 0;
+}
+.nav-links { display: flex; align-items: center; gap: 4px; margin-left: auto; }
+.nav-links a {
+  font-size: 0.875rem; font-weight: 500; color: var(--muted);
+  padding: 8px 14px; border-radius: var(--r-md); transition: 0.15s;
+}
+.nav-links a:hover { color: var(--text); background: var(--surface); }
+.nav-cta { display: flex; align-items: center; gap: 8px; }
+
+/* ── HERO ─────────────────────────────────────────────── */
+.hero {
+  min-height: 100vh; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center; padding: 120px 24px 60px; position: relative; overflow: hidden;
+}
+.hero-bg {
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(79,142,247,0.22), transparent),
+    linear-gradient(var(--border) 1px, transparent 1px) 0 0 / 60px 60px,
+    linear-gradient(90deg, var(--border) 1px, transparent 1px) 0 0 / 60px 60px;
+  opacity: 0.4;
+}
+.hero-content { position: relative; z-index: 1; max-width: 780px; }
+.hero-badge {
+  display: inline-block; background: var(--accentDim); border: 1px solid rgba(0,229,160,0.3);
+  color: var(--accent); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; padding: 6px 16px; border-radius: var(--r-full); margin-bottom: 24px;
+}
+.hero h1 { margin-bottom: 18px; }
+.hero-sub { font-size: 1.05rem; color: var(--muted); line-height: 1.7; max-width: 540px; margin: 0 auto 36px; }
+.hero-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 52px; }
+.hero-stats   { display: flex; gap: 40px; justify-content: center; flex-wrap: wrap; }
+.stat-num { font-family: var(--font-display); font-size: 1.7rem; font-weight: 700; display: block; }
+.stat-label { font-size: 0.75rem; color: var(--muted); }
+.stat-divider { width: 1px; height: 36px; background: var(--border); }
+
+/* ── DASHBOARD MOCKUP ────────────────────────────────── */
+.mockup-wrap { max-width: 860px; margin: 56px auto 0; padding: 0 24px; }
+.mockup {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+  overflow: hidden; box-shadow: 0 40px 80px rgba(0,0,0,0.5), 0 0 30px rgba(79,142,247,0.12);
+}
+.mockup-bar {
+  background: var(--surface2); border-bottom: 1px solid var(--border);
+  padding: 12px 16px; display: flex; align-items: center; gap: 8px;
+}
+.dot { width: 12px; height: 12px; border-radius: 50%; }
+.dot-r{background:#F75F5F} .dot-y{background:#F5A623} .dot-g{background:#00E5A0}
+.mockup-url { margin-left: 12px; font-size: 0.72rem; color: var(--muted); font-family: monospace; }
+.mockup-body { display: flex; min-height: 260px; }
+.mockup-sidebar {
+  width: 150px; border-right: 1px solid var(--border); padding: 14px 8px;
+  display: flex; flex-direction: column; gap: 4px; flex-shrink: 0;
+}
+.mockup-sidebar .ms-item {
+  padding: 7px 10px; border-radius: var(--r-md); font-size: 0.78rem; color: var(--muted);
+}
+.mockup-sidebar .ms-item.active { background: var(--primaryGlow); color: var(--primary); font-weight: 600; }
+.mockup-main { flex: 1; padding: 18px; }
+.mockup-greeting { font-size: 0.82rem; color: var(--muted); margin-bottom: 12px; }
+.mockup-cards  { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 16px; }
+.mock-card { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--r-md); padding: 10px; }
+.mock-card-label { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 3px; }
+.mock-card-val   { font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; }
+.mock-card-sub   { font-size: 0.66rem; margin-top: 2px; }
+.mockup-bars-wrap { }
+.mockup-bars-label { font-size: 0.72rem; color: var(--muted); margin-bottom: 8px; font-weight: 600; }
+.mockup-bars { display: flex; align-items: flex-end; gap: 8px; height: 64px; }
+.mock-bar-col { display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; }
+.mock-bar { width: 100%; border-radius: 4px 4px 0 0; min-height: 6px; }
+.mock-bar-label { font-size: 0.58rem; color: var(--faint); }
+
+/* ── FEATURES SECTION ────────────────────────────────── */
+.features { background: var(--surface); border-top: 1px solid var(--border); padding: 80px 24px; }
+.features-inner { max-width: 1100px; margin: 0 auto; }
+.features h2, .section-center { text-align: center; }
+.features-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap: 18px;
+}
+.feature-card {
+  background: var(--bg); border: 1px solid var(--border); border-radius: var(--r-xl);
+  padding: 26px; display: flex; flex-direction: column;
+  transition: all 0.2s; cursor: pointer;
+}
+.feature-card:hover { border-color: var(--primary); transform: translateY(-3px); box-shadow: 0 12px 32px rgba(79,142,247,0.12); }
+.feature-card.featured { border-color: var(--primary); background: linear-gradient(135deg, var(--bg), rgba(79,142,247,0.07)); }
+.feature-card-icon { font-size: 1.8rem; margin-bottom: 12px; }
+.feature-card h3 { margin-bottom: 8px; }
+.feature-card p { color: var(--muted); font-size: 0.875rem; line-height: 1.6; flex: 1; margin-bottom: 14px; }
+.feature-card-link { font-size: 0.82rem; font-weight: 700; color: var(--primary); }
+
+/* ── HOW IT WORKS ────────────────────────────────────── */
+.how-section { padding: 80px 24px; }
+.how-inner { max-width: 1100px; margin: 0 auto; }
+.steps { display: flex; align-items: flex-start; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 40px; }
+.step { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-xl); padding: 24px; width: 220px; flex-shrink: 0; }
+.step-num { font-family: var(--font-display); font-size: 2rem; font-weight: 800; color: var(--primary); opacity: 0.5; margin-bottom: 10px; }
+.step h3 { margin-bottom: 8px; }
+.step p { font-size: 0.85rem; color: var(--muted); }
+.step-arrow { font-size: 1.4rem; color: var(--faint); padding-top: 40px; }
+
+/* ── GAMIFICATION ────────────────────────────────────── */
+.gamify-section { padding: 80px 24px; background: var(--bg); }
+.gamify-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+.gamify-text p { color: var(--muted); margin-bottom: 20px; line-height: 1.7; }
+.rank-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
+.rank-item { display: flex; align-items: center; gap: 12px; font-size: 0.9rem; color: var(--muted); }
+.badges-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
+
+/* ── CTA BAND ────────────────────────────────────────── */
+.cta-band {
+  background: linear-gradient(135deg,#0d1829,#111a30);
+  border-top: 1px solid var(--border); padding: 80px 24px; text-align: center;
+}
+.cta-band h2 { margin-bottom: 12px; }
+.cta-band p  { color: var(--muted); font-size: 1.05rem; margin-bottom: 28px; }
+
+/* ── FOOTER ─────────────────────────────────────────── */
+footer {
+  background: var(--surface); border-top: 1px solid var(--border);
+  padding: 32px 24px; text-align: center;
+  font-size: 0.8rem; color: var(--faint);
+}
+footer a { color: var(--primary); }
+
+@media(max-width:768px){
+  .gamify-inner { grid-template-columns:1fr; }
+  .step { width:100%; max-width:400px; }
+  .step-arrow { display:none; }
+  .nav-links { display:none; }
+  .mockup-sidebar { display:none; }
+}
