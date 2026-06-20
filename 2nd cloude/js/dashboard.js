@@ -501,6 +501,85 @@ function sendCoachSugg(btn) {
   sendCoach();
 }
 
+// ─── CANNED COACH REPLIES ──────────────────────────────
+// No backend yet, so the coach answers locally using real data from db.js.
+// Swap this block out for a real fetch() to your proxy server later.
+function generateCoachReply(message) {
+  const msg     = message.toLowerCase();
+  const user    = User.get();
+  const budget  = Budget.get();
+  const pred    = Predictor.calculate();
+  const hs      = HealthScore.calculate();
+  const goals   = Goals.getAll();
+  const { summary } = Expenses.getSummaryByCategory(7);
+  const top     = Object.entries(summary).sort((a,b)=>b[1]-a[1])[0];
+  const name    = user.name.split(' ')[0];
+
+  // Budgeting
+  if (/budget|allocat|spend.*plan|enough|how much.*(spend|use)|split.*money/.test(msg)) {
+    const a = budget?.allocations;
+    return a
+      ? `Based on your GHS ${budget.totalIncome} monthly income, here's a healthy split: 🍔 Food GHS ${a.food}, 🚌 Transport GHS ${a.transport}, 📶 Data GHS ${a.data}, 🎯 Savings GHS ${a.savings}, ⚡ Discretionary GHS ${a.discretionary}. Stick close to these and you'll stay on track.`
+      : `You haven't set up a budget yet — head to Budget Planner and enter your income so I can build you a personalized allocation.`;
+  }
+
+  // Afford a purchase
+  if (/afford|can i (buy|get)|new phone|laptop|buy.*now|wait.*buy|should i (buy|get|wait)/.test(msg)) {
+    const runway = pred.daysRemaining ?? '?';
+    return `Right now you have ${UI.formatGHS(user.balance)} with about ${runway} days until your next stipend (ceiling: ${UI.formatGHS(pred.dailyCeiling||0)}/day). If the purchase costs more than what's left after covering ${runway} days at your ceiling, I'd hold off or save toward it as a goal first — want me to help you set one up?`;
+  }
+
+  // Saving faster
+  if (/save faster|how.*save|savings? tips?|want to save|save.*by (january|february|march|april|may|june|july|august|september|october|november|december|\d)/.test(msg)) {
+    const g0 = goals[0];
+    return g0
+      ? `For your "${g0.name}" goal, you're at ${UI.formatGHS(g0.savedAmount)} of ${UI.formatGHS(g0.targetAmount)}. Try moving GHS 20–30 into it right after each stipend lands, before it gets spent elsewhere — automatic beats willpower every time. 🎯`
+      : `You don't have any savings goals yet — start with something concrete (a laptop, rent buffer, etc.) so your saving has a target. Head to Savings Goals to set one up.`;
+  }
+
+  // Scholarships / opportunities
+  if (/scholarship|grant|opportunit|internship/.test(msg)) {
+    return `Check the Opportunity Hub — it's curated for students like you with scholarships, grants, and campus jobs. I'd also recommend reconciling your balance weekly so you know exactly how much breathing room you have before applying anywhere with fees.`;
+  }
+
+  // Spending insight
+  if (/spend|spending|where.*money|overspend|eating.*money|what.*eating/.test(msg)) {
+    return top
+      ? `Your biggest spend this week is ${top[0]} at ${UI.formatGHS(top[1])}. If that's higher than you'd like, try setting a soft daily cap for it and logging every purchase — even small ones add up fast.`
+      : `You haven't logged any expenses this week yet — head to Log Expense so I can give you real insight into your spending patterns.`;
+  }
+
+  // Health score / general "how am I doing"
+  if (/health score|how am i doing|financial health|doing (okay|ok|well|fine)|am i (okay|ok|doing)/.test(msg)) {
+    return `Your Financial Health Score is ${hs.score}/100 right now. ${hs.score>=85?'Excellent — you\'re basically running a tight ship! 🌟':hs.score>=70?'That\'s solid — keep logging daily and sticking to your budget. 💚':hs.score>=50?'Decent, but there\'s room to improve — try boosting your savings rate and logging consistency. ⚠️':'It needs work — focus on logging every expense and setting a real budget this week. 🔴'}`;
+  }
+
+  // Streak / motivation
+  if (/streak|motivat|keep.*track/.test(msg)) {
+    return `You're on a ${user.streakDays}-day streak, ${name}! 🔥 Log at least one expense today to keep it alive — consistency is what actually moves your Health Score, more than any single big decision.`;
+  }
+
+  // General tip / advice request
+  if (/give me a tip|any (tips?|advice)|got advice|help me out/.test(msg)) {
+    return top
+      ? `Quick one: your top spend this week is ${top[0]} (${UI.formatGHS(top[1])}). Trimming that by even 15% and redirecting it to savings would meaningfully move your Health Score (currently ${hs.score}/100). Want a deeper breakdown?`
+      : `Start by logging every expense for a few days — even small ones. Once I have that data I can give you sharper, more specific tips.`;
+  }
+
+  // Greeting / generic
+  if (/^(hi|hello|hey|sup|yo)\b/.test(msg)) {
+    return `Hey ${name}! 👋 Ask me about your budget, whether you can afford something, how to save faster, or what's eating your spending this week.`;
+  }
+
+  // Off-topic / unrelated input (weather, gibberish, etc.) — gently redirect
+  if (/weather|joke|football|movie|^[a-z]{1,3}$|asdf|qwer/.test(msg) || message.trim().length < 2) {
+    return `I'm focused on your finances specifically, ${name} — but I've got real data on you! Try asking about your budget, spending this week, savings goals, or whether you can afford something.`;
+  }
+
+  // Fallback
+  return `Good question! Based on your numbers — balance ${UI.formatGHS(user.balance)}, ${pred.daysRemaining ?? '?'} days of runway, Health Score ${hs.score}/100 — I'd focus on keeping your daily spend under ${UI.formatGHS(pred.dailyCeiling||0)} and logging consistently. Try asking me about your budget, savings, or spending breakdown for more specific advice.`;
+}
+
 async function sendCoach() {
   const input   = document.getElementById('coachInput');
   const message = input.value.trim();
@@ -523,26 +602,12 @@ async function sendCoach() {
 
   document.getElementById('coachSendBtn').disabled = true;
 
-  try {
-    const history = Coach.getHistory();
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model:      'claude-sonnet-4-6',
-        max_tokens: 1000,
-        system:     Coach.buildSystemPrompt(),
-        messages:   history.map(m => ({ role: m.role === 'assistant' ? 'assistant' : 'user', content: m.text }))
-      })
-    });
-    const data  = await res.json();
-    const reply = data.content?.[0]?.text || 'I had trouble responding. Please try again.';
-    loadEl.remove();
-    Coach.addMessage('assistant', reply);
-  } catch(err) {
-    loadEl.remove();
-    Coach.addMessage('assistant', 'Connection issue — check your internet and try again.');
-  }
+  // Simulate a brief "thinking" delay so the loading state reads naturally
+  await new Promise(resolve => setTimeout(resolve, 500 + Math.random()*500));
+
+  const reply = generateCoachReply(message);
+  loadEl.remove();
+  Coach.addMessage('assistant', reply);
 
   document.getElementById('coachSendBtn').disabled = false;
   renderCoachMessages();

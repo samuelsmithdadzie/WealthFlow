@@ -604,6 +604,296 @@
 }
 
 /* ==============================
+   NOTIFICATIONS LIST
+============================== */
+
+.notif-item {
+    display: flex;
+    gap: 10px;
+    padding: 10px 8px;
+    border-radius: var(--r-md);
+    cursor: pointer;
+    transition: 0.15s ease;
+}
+
+.notif-item:hover {
+    background: var(--surface2);
+}
+
+.notif-item.unread {
+    background: var(--primaryGlow);
+}
+
+.notif-item p {
+    font-size: 0.82rem;
+    line-height: 1.4;
+}
+
+.notif-time {
+    font-size: 0.7rem;
+    color: var(--muted);
+    margin-top: 3px;
+}
+
+/* ==============================
+   AI COACH — CHAT MESSAGES
+============================== */
+
+.msg {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 14px;
+    align-items: flex-start;
+}
+
+.msg.user {
+    flex-direction: row-reverse;
+}
+
+.msg-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 0.8rem;
+    flex-shrink: 0;
+}
+
+.msg-avatar.bot {
+    background: var(--grad-primary);
+}
+
+.msg-avatar.user {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+}
+
+.msg-bubble {
+    max-width: 78%;
+    padding: 0.7rem 0.95rem;
+    border-radius: var(--r-lg);
+    font-size: 0.85rem;
+    line-height: 1.55;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+}
+
+.msg.user .msg-bubble {
+    background: var(--grad-primary);
+    color: #fff;
+    border: none;
+}
+
+/* ==============================
+   CALENDAR EVENTS
+============================== */
+
+.calendar-event {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0.8rem;
+    border-radius: var(--r-md);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    margin-bottom: 0.6rem;
+}
+
+.cal-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--r-md);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    display: grid;
+    place-items: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+.cal-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.cal-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.cal-date {
+    font-size: 0.72rem;
+    color: var(--muted);
+}
+
+.cal-amount {
+    font-family: var(--font-display);
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.cal-amount.cal-type-bill { color: var(--danger); }
+.cal-amount.cal-type-stipend { color: var(--accent); }
+.cal-amount.cal-type-deadline { color: var(--warn); }
+.cal-amount.cal-type-reminder { color: var(--primary); }
+
+/* ==============================
+   PREDICTOR ALERT COLORS
+============================== */
+
+.predictor-days.safe { background: var(--grad-accent); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.predictor-days.warning { color: var(--warn); -webkit-text-fill-color: var(--warn); background: none; }
+.predictor-days.danger { color: var(--danger); -webkit-text-fill-color: var(--danger); background: none; }
+.predictor-days.unknown { color: var(--muted); -webkit-text-fill-color: var(--muted); background: none; }
+
+/* ==============================
+   RECONCILIATION HISTORY
+============================== */
+
+.recon-hist-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.65rem 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.82rem;
+}
+
+.recon-hist-item:last-child {
+    border-bottom: none;
+}
+
+/* ==============================
+   ACHIEVEMENTS — LEVEL LIST
+============================== */
+
+.level-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0.7rem;
+    border-radius: var(--r-md);
+    margin-bottom: 0.5rem;
+    opacity: 0.5;
+}
+
+.level-item.unlocked {
+    opacity: 1;
+}
+
+.level-item.current {
+    background: var(--primaryGlow);
+    border: 1px solid var(--primary);
+    opacity: 1;
+}
+
+.level-item-emoji {
+    font-size: 1.3rem;
+    width: 32px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.level-item-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.level-item-desc {
+    font-size: 0.72rem;
+    color: var(--muted);
+}
+
+.level-item-status {
+    margin-left: auto;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+/* ==============================
+   HEALTH SCORE — FACTOR ROWS
+============================== */
+
+.health-factor-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 0.7rem;
+}
+
+.health-factor-name {
+    width: 130px;
+    font-size: 0.78rem;
+    color: var(--muted);
+    flex-shrink: 0;
+}
+
+.health-factor-score {
+    width: 32px;
+    text-align: right;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+/* ==============================
+   BUDGET PLANNER — ROWS
+============================== */
+
+.budget-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0.7rem 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.budget-row:last-child {
+    border-bottom: none;
+}
+
+.budget-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--r-md);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    display: grid;
+    place-items: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+.budget-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.budget-name {
+    font-size: 0.84rem;
+    font-weight: 600;
+    margin-bottom: 3px;
+}
+
+.budget-amounts {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.72rem;
+    color: var(--muted);
+    margin-bottom: 5px;
+}
+
+.budget-pct {
+    font-family: var(--font-display);
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--primary);
+    width: 40px;
+    text-align: right;
+    flex-shrink: 0;
+}
+
+/* ==============================
    RESPONSIVE DESIGN
 ============================== */
 
