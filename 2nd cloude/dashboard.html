@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard — WealthFlow</title>
+  <link rel="stylesheet" href="css/global.css"/>
+  <link rel="stylesheet" href="css/dashboard.css"/>
+</head>
+<body>
+<div class="app-shell">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()">☰</button>
+    <a href="index.html" class="topbar-logo">
+      <div class="logo-mark">W</div>
+      WealthFlow
+    </a>
+    <div class="topbar-spacer"></div>
+    <div class="topbar-streak" id="topbarStreak">🔥 5-day streak · Score 74/100</div>
+    <div style="position:relative">
+      <div class="topbar-notif" id="notifBtn" onclick="toggleNotif()">
+        🔔<div class="notif-dot" id="notifDot"></div>
+      </div>
+      <div class="notif-dropdown" id="notifDropdown">
+        <div class="notif-header">
+          <h4>Notifications</h4>
+          <button class="btn btn-ghost btn-sm" onclick="markAllRead()">Mark all read</button>
+        </div>
+        <div id="notifList"></div>
+      </div>
+    </div>
+    <div class="topbar-avatar" id="topbarAvatar">A</div>
+    <a href="index.html" class="btn btn-ghost btn-sm" style="margin-left:4px">← Home</a>
+  </header>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
+  <aside class="sidebar" id="sidebarEl">
+    <span class="sidebar-section-label">Main</span>
+    <div class="nav-item active" data-section="overview"  onclick="switchSection('overview',this)"><span class="icon">📊</span> Overview</div>
+    <div class="nav-item" data-section="expenses"  onclick="switchSection('expenses',this)"><span class="icon">⚡</span> Log Expense</div>
+    <div class="nav-item" data-section="budget"    onclick="switchSection('budget',this)"><span class="icon">🧮</span> Budget Planner</div>
+    <div class="nav-item" data-section="goals"     onclick="switchSection('goals',this)"><span class="icon">🎯</span> Savings Goals</div>
+    <div class="nav-item" data-section="predictor" onclick="switchSection('predictor',this)"><span class="icon">🔮</span> Survival Predictor</div>
+
+    <span class="sidebar-section-label">Intelligence</span>
+    <div class="nav-item" data-section="coach"     onclick="switchSection('coach',this)"><span class="icon">🤖</span> AI Coach <span class="nav-badge">AI</span></div>
+    <div class="nav-item" data-section="health"    onclick="switchSection('health',this)"><span class="icon">❤️</span> Health Score</div>
+    <div class="nav-item" data-section="reconcile" onclick="switchSection('reconcile',this)"><span class="icon">⚖️</span> Reconcile</div>
+    <div class="nav-item" data-section="calendar"  onclick="switchSection('calendar',this)"><span class="icon">📅</span> Calendar</div>
+
+    <span class="sidebar-section-label">Progress</span>
+    <div class="nav-item" data-section="achievements" onclick="switchSection('achievements',this)"><span class="icon">🏆</span> Achievements</div>
+    <a class="nav-item" href="opportunities.html"><span class="icon">🔍</span> Opportunities</a>
+    <a class="nav-item" href="pricing.html"><span class="icon">⭐</span> Upgrade</a>
+
+    <div class="sidebar-spacer"></div>
+    <div class="sidebar-user">
+      <div class="sidebar-avatar" id="sidebarAvatar">A</div>
+      <div>
+        <div class="sidebar-user-name" id="sidebarName">Ama Owusu</div>
+        <div class="sidebar-user-rank" id="sidebarRank">⚡ Smart Spender</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+
+    <!-- ══════════════════════════════════════════════════
+         OVERVIEW SECTION
+    ══════════════════════════════════════════════════ -->
+    <div class="dash-section active" id="sec-overview">
+      <div class="section-header">
+        <div>
+          <h2 id="overviewGreeting">Good morning, Ama 👋</h2>
+          <p id="overviewSub">Loading your financial snapshot...</p>
+        </div>
+        <button class="btn btn-primary" onclick="switchSection('expenses',document.querySelector('[data-section=expenses]'))">+ Log Expense</button>
+      </div>
+
+      <!-- Metrics -->
+      <div class="metric-row" id="metricRow"></div>
+
+      <!-- Savings progress + transactions -->
+      <div class="grid-aside">
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div class="card" id="savingsGoalCard"></div>
+          <div class="card">
+            <div class="section-header" style="margin-bottom:14px">
+              <h3>Recent Transactions</h3>
+              <button class="btn btn-ghost btn-sm" onclick="switchSection('expenses',document.querySelector('[data-section=expenses]'))">Log →</button>
+            </div>
+            <div id="recentTxList"></div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div class="card" id="streakCard"></div>
+          <div class="card" id="healthMiniCard"></div>
+          <div class="card">
+            <h3 style="margin-bottom:8px">🤖 Quick Tip</h3>
+            <p id="quickTip" style="font-size:0.83rem;color:var(--muted);line-height:1.6;margin-bottom:12px"></p>
+            <button class="btn btn-outline btn-sm btn-full" onclick="switchSection('coach',document.querySelector('[data-section=coach]'))">Ask AI Coach →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════
+         EXPENSE LOGGER SECTION
+    ══════════════════════════════════════════════════ -->
+    <div class="dash-section" id="sec-expenses">
+      <div class="section-header">
+        <div><h2>Log Expense ⚡</h2><p>10-second expense logging — tap, enter, done.</p></div>
+      </div>
+      <div class="grid-2">
+        <!-- Logger -->
+        <div class="card">
+          <div class="amount-display" id="amountDisplay">GHS 0</div>
+          <p class="form-label" style="margin-bottom:8px">Select Category</p>
+          <div class="cat-pills" id="catPills">
+            <div class="cat-pill" data-cat="Food"          onclick="selectCat(this)">🍔 Food</div>
+            <div class="cat-pill" data-cat="Transport"     onclick="selectCat(this)">🚌 Transport</div>
+            <div class="cat-pill" data-cat="Data"          onclick="selectCat(this)">📶 Data</div>
+            <div class="cat-pill" data-cat="Education"     onclick="selectCat(this)">📚 Education</div>
+            <div class="cat-pill" data-cat="Entertainment" onclick="selectCat(this)">🎉 Entertainment</div>
+            <div class="cat-pill" data-cat="Miscellaneous" onclick="selectCat(this)">⚙️ Misc</div>
+          </div>
+          <div class="form-group" style="margin-bottom:12px">
+            <label class="form-label">Note (optional)</label>
+            <input type="text" class="input-field" id="expenseNote" placeholder="e.g. Campus Canteen lunch"/>
+          </div>
+          <div class="numpad">
+            <button class="num-btn" onclick="numPad(7)">7</button>
+            <button class="num-btn" onclick="numPad(8)">8</button>
+            <button class="num-btn" onclick="numPad(9)">9</button>
+            <button class="num-btn" onclick="numPad(4)">4</button>
+            <button class="num-btn" onclick="numPad(5)">5</button>
+            <button class="num-btn" onclick="numPad(6)">6</button>
+            <button class="num-btn" onclick="numPad(1)">1</button>
+            <button class="num-btn" onclick="numPad(2)">2</button>
+            <button class="num-btn" onclick="numPad(3)">3</button>
+            <button class="num-btn" onclick="numPad('.')">.</button>
+            <button class="num-btn zero" onclick="numPad(0)">0</button>
+            <button class="num-btn del" onclick="numPad('del')">⌫</button>
+          </div>
+          <button class="btn btn-primary btn-full btn-lg" onclick="logExpense()">Log Expense →</button>
+        </div>
+
+        <!-- Side info -->
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div class="card">
+            <h3 style="margin-bottom:14px">Today's Summary</h3>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <span style="font-size:0.85rem;color:var(--muted)">Daily Ceiling</span>
+                <span style="font-family:var(--font-display);font-weight:700;color:var(--accent)" id="todayCeiling">GHS —</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <span style="font-size:0.85rem;color:var(--muted)">Spent Today</span>
+                <span style="font-family:var(--font-display);font-weight:700;color:var(--danger)" id="todaySpentAmt">GHS 0.00</span>
+              </div>
+              <div class="progress-track"><div class="progress-fill" id="todayProgress" style="width:0%"></div></div>
+            </div>
+          </div>
+          <div class="card">
+            <h3 style="margin-bottom:12px">7-Day Category Breakdown</h3>
+            <div id="catBreakdown"></div>
+          </div>
+          <div class="card">
+            <h3 style="margin-bottom:10px">Recent Entries</h3>
+            <div id="expenseRecentList" style="max-height:200px;overflow-y:auto"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════
+         BUDGET PLANNER SECTION
+    ══════════════════════════════════════════════════ -->
+    <div class="dash-section" id="sec-budget">
+      <div class="section-header">
+        <div><h2>Budget Planner 🧮</h2><p>Your income-based spending blueprint — WealthFlow recommended allocations.</p></div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-bottom:16px">Monthly Income Setup</h3>
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div class="form-group">
+              <label class="form-label">Monthly Allowance (GHS)</label>
+              <input type="number" class="input-field" id="budgetMonthly" placeholder="e.g. 1200"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Side Hustle Income (GHS)</label>
+              <input type="number" class="input-field" id="budgetSide" placeholder="e.g. 200"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Scholarship / Grant (GHS)</label>
+              <input type="number" class="input-field" id="budgetScholarship" placeholder="e.g. 0"/>
+            </div>
+            <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-lg);padding:14px">
+              <div class="form-label">Total Monthly Income</div>
+              <div style="font-family:var(--font-display);font-size:1.7rem;font-weight:700;color:var(--accent)" id="budgetTotal">GHS 0.00</div>
+            </div>
+            <button class="btn btn-primary btn-full" onclick="saveBudget()">Save Budget →</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="section-header" style="margin-bottom:16px">
+            <h3>Budget Allocation</h3>
+            <span style="font-size:0.75rem;color:var(--muted)">WealthFlow recommended</span>
+          </div>
+          <div id="budgetRows"></div>
+        </div>
+      </div>
+      <div class="card" id="budgetTipsCard"></div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════
+         SAVINGS GOALS SECTION
+    ══════════════════════════════════════════════════ -->
+    <div class="dash-section" id="sec-goals">
+      <div class="section-header">
+        <div><h2>Savings Goals 🎯</h2><p>Break big costs into trackable milestones.</p></div>
+        <button class="btn btn-primary" onclick="toggleNewGoalForm()">+ Add Goal</button>
+      </div>
+
+      <!-- New Goal Form -->
+      <div class="card" id="newGoalForm" style="display:none">
+        <h3 style="margin-bottom:14px">New Savings Goal</h3>
+        <div class="grid-2" style="margin-bottom:12px">
+          <div class="form-group">
+            <label class="form-label">Goal Name</label>
+            <input type="text" class="input-field" id="goalName" placeholder="e.g. New Laptop"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Target Amount (GHS)</label>
+            <input type="number" class="input-field" id="goalAmount" placeholder="500"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Target Date</label>
+            <input type="date" class="input-field" id="goalDate"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Emoji</label>
+            <input type="text" class="input-field" id="goalEmoji" placeholder="💻" maxlength="4"/>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-primary" onclick="addGoal()">Create Goal</button>
+          <button class="btn btn-ghost" onclick="toggleNewGoalForm()">Cancel</button>
+        </div>
+      </div>
+
+      <div class="grid-auto" id="goalsGrid"></div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════
+         SURVIVAL PREDICTOR SECTION
+    ══════════════════════════════════════════════════ -->
+    <div class="dash-section" id="sec-predictor">
+      <div class="section-header">
+        <div><h2>Allowance Survival Predictor 🔮</h2><p>Know exactly how long your money will last.</p></div>
+      </div>
+      <div class="grid-2">
+        <div class="card" style="text-align:center">
+          <div class="predictor-days" id="predDays">—</div>
+          <p style="color:var(--muted);margin-bottom:22px">days of runway remaining</p>
+          <div class="ceiling-box" style="margin-bottom:16px;text-align:left">
+            <div class="ceiling-label">Daily Spending Ceiling</div>
+            <div class="ceiling-val" id="predCeiling">GHS —</div>
+            <div class="ceiling-sub" id="predCeilingSub"></div>
+          </div>
+          <div id="predAlert"></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div class="card">
+            <h3 style="margin-bottom:14px">Update Your Data</h3>
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <div class="form-group">
+                <label class="form-label">Current Balance (GHS)</label>
+                <input type="number" class="input-field" id="predBalance" placeholder="847.50"/>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Next Stipend Date</label>
+                <input type="date" class="input-field" id="predDate"/>
+              </div>
+              <button class="btn btn-primary btn-full" onclick="updatePredictor()">Recalculate →</button>
+            </div>
+          </div>
+          <div class="card">
+            <h3 style="margin-bottom:12px">Spending Scenarios</h3>
+            <div id="predScenarios"></div>
+          </div>
+          <div class="card">
+            <h3 style="margin-bottom:8px">Avg Daily Spend</h3>
+            <div style="font-family:var(--font-display);font-size:1.8rem;font-weight:700" id="predAvgDaily">GHS —</div>
+            <div style="font-size:0.75rem;color:var(--muted);margin-top:4px">Based on last 7 days</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════
+         AI COACH SECTION
+    ══════════════════════════════════════════════════ -->
+    <div class="dash-section" id="sec-coach">
+      <div class="section-header">
+        <div><h2>AI Financial Coach 🤖</h2><p>Powered by Claude AI — personalized to your real financial data.</p></div>
+      </div>
+      <div class="grid-aside">
+        <div class="card coach-wrap">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--border)">
+            <div style="width:32px;height:32px;border-radius:50%;background:var(--grad-primary);display:flex;align-items:center;justify-content:center;font-size:1rem">🤖</div>
+            <div>
+              <div style="font-size:0.88rem;font-weight:600">WealthFlow AI Coach</div>
+              <div style="font-size:0.72rem;color:var(--accent)">● Online · Context-aware</div>
+            </div>
+          </div>
+          <div class="coach-messages" id="coachMessages"></div>
+          <div class="coach-divider"></div>
+          <div class="coach-suggestions" id="coachSuggestions">
+            <button class="coach-sugg" onclick="sendCoachSugg(this)">How should I budget GHS 800 this month?</button>
+            <button class="coach-sugg" onclick="sendCoachSugg(this)">Can I afford a new phone by next semester?</button>
+            <button class="coach-sugg" onclick="sendCoachSugg(this)">How do I save faster?</button>
+            <button class="coach-sugg" onclick="sendCoachSugg(this)">What scholarships can I apply for?</button>
+          </div>
+          <div class="coach-input-row">
+            <input type="text" class="input-field" id="coachInput" placeholder="Ask anything about your finances..." onkeydown="if(event.key==='Enter')sendCoach()"/>
+            <button class="btn btn-primary" id="coachSendBtn" onclick="sendCoach()">Send →</button>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div class="card" id="coachSnapshotCard"></div>
+          <div class="card" id="coachInsightsCard"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════
+         HEALTH SCORE SECTION
+    ══════════════════════════════════════════════════ -->
+    <div class="dash-section" id="sec-health">
+      <div class="section-header">
+        <div><h2>Financial Health Score ❤️</h2><p>Your real-time financial wellness rating.</p></div>
+        <button class="btn btn-outline" onclick="renderHealth()">↻ Recalculate</button>
+      </div>
+      <div class="grid-2">
+        <div class="card" style="display:flex;flex-direction:column;align-items:center;gap:16px;padding:28px">
+          <div class="health-ring" id="healthRing" style="--pct:74%">
+            <div class="health-ring-val" id="healthRingVal">74</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-size:1.1rem;font-weight:700" id="healthLabel">Good 💚</div>
+            <div style="font-size:0.8rem;color:var(--muted);margin-top:4px">Score above 85 earns the Financial Master badge 🏆</div>
+          </div>
+          <div style="width:100%" id="healthFactors"></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div class="card">
+            <h3 style="margin-bottom:14px">How to Improve</h3>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div style="display:flex;gap:10px;font-size:0.84rem;color:var(--muted)"><span>📉</span><span>Reduce food spending to stay within your 35% budget allocation.</span></div>
+              <div style="display:flex;gap:10px;font-size:0.84rem;color:var(--muted)"><span>🔥</span><span>Maintain your logging streak for 7 consecutive days.</span></div>
+              <div style="display:flex;gap:10px;font-size:0.84rem;color:var(--muted)"><span>🎯</span><span>Hit your first savings milestone to unlock the Smart Saver badge.</span></div>
+              <div style="display:flex;gap:10px;font-size:0.84rem;color:var(--muted)"><span>⚖️</span><span>Reconcile your balance at least once this week (+25 XP).</span></div>
+            </div>
+          </div>
+          <div class="card" id="healthScoreGrid"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════
+         RECONCILE SECTION
+    ══════════════════════════════════════════════════ -->
+    <div class="dash-section" id="sec-reconcile">
+      <div class="section-header">
+        <div><h2>Balance Reconciliation ⚖️</h2><p>Sync your records with your actual cash on hand.</p></div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-bottom:16px">Weekly Audit</h3>
+          <div class="recon-expected">
+            <div class="form-label">System Expected Balance</div>
+            <div style="font-family:var(--font-display);font-size:2rem;font-weight:700" id="reconExpected">GHS —</div>
+          </div>
+          <div class="form-group" style="margin-bottom:14px">
+            <label class="form-label">How much cash do you actually have? (GHS)</label>
+            <input type="number" class="input-field" id="reconInput" placeholder="Enter your actual balance..."/>
+          </div>
+          <button class="btn btn-primary btn-full" onclick="runReconcile()">Reconcile Now →</button>
+          <div id="reconResult" style="margin-top:14px"></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div class="card">
+            <h3 style="margin-bottom:14px">Why Reconcile?</h3>
+            <p style="font-size:0.875rem;color:var(--muted);margin-bottom:14px;line-height:1.65">Cash payments, split bills, and forgotten purchases create gaps between logged expenses and your real balance. Weekly reconciliation keeps your data accurate.</p>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;gap:10px;font-size:0.84rem;color:var(--muted)"><span>✅</span><span>Detects unlogged expenses automatically</span></div>
+              <div style="display:flex;gap:10px;font-size:0.84rem;color:var(--muted)"><span>✅</span><span>Auto-categorizes gaps as Miscellaneous</span></div>
+              <div style="display:flex;gap:10px;font-size:0.84rem;color:var(--muted)"><span>✅</span><span>Keeps survival predictor accurate</span></div>
+              <div style="display:flex;gap:10px;font-size:0.84rem;color:var(--muted)"><span>✅</span><span>Earns the Reconciliation Pro badge +30 XP</span></div>
+            </div>
+          </div>
+          <div class="card">
+            <h3 style="margin-bottom:12px">Reconciliation History</h3>
+            <div id="reconHistory"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════
+         CALENDAR SECTION
+    ══════════════════════════════════════════════════ -->
+    <div class="dash-section" id="sec-calendar">
+      <div class="section-header">
+        <div><h2>Financial Calendar 📅</h2><p>Track deadlines, bills, stipends, and reminders.</p></div>
+        <button class="btn btn-primary" onclick="toggleCalForm()">+ Add Event</button>
+      </div>
+      <div class="card" id="calForm" style="display:none;margin-bottom:16px">
+        <h3 style="margin-bottom:14px">New Calendar Event</h3>
+        <div class="grid-2" style="margin-bottom:12px">
+          <div class="form-group">
+            <label class="form-label">Title</label>
+            <input type="text" class="input-field" id="calTitle" placeholder="e.g. Room Rent Due"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Date</label>
+            <input type="date" class="input-field" id="calDate"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Type</label>
+            <select class="input-field" id="calType">
+              <option value="deadline">Deadline</option>
+              <option value="bill">Bill</option>
+              <option value="stipend">Stipend</option>
+              <option value="reminder">Reminder</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Amount (GHS, optional)</label>
+            <input type="number" class="input-field" id="calAmount" placeholder="0"/>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-primary" onclick="addCalEvent()">Add Event</button>
+          <button class="btn btn-ghost" onclick="toggleCalForm()">Cancel</button>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-bottom:14px">Upcoming Events</h3>
+          <div id="calList"></div>
+        </div>
+        <div class="card">
+          <h3 style="margin-bottom:14px">This Month Overview</h3>
+          <div id="calSummary"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════
+         ACHIEVEMENTS SECTION
+    ══════════════════════════════════════════════════ -->
+    <div class="dash-section" id="sec-achievements">
+      <div class="section-header">
+        <div><h2>Achievements 🏆</h2><p>Your financial journey, gamified.</p></div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="margin-bottom:14px">Your Rank</h3>
+          <div style="color:var(--accent);font-weight:700;font-size:1rem;margin-bottom:14px" id="achRankName">Smart Spender — Level 3</div>
+          <div style="margin-bottom:18px">
+            <div style="display:flex;justify-content:space-between;font-size:0.78rem;color:var(--muted);margin-bottom:6px">
+              <span id="achXP">340 XP</span>
+              <span id="achNextLevel">Level 4: 600 XP</span>
+            </div>
+            <div class="progress-track xp-bar"><div class="progress-fill" id="achXPBar" style="width:40%"></div></div>
+          </div>
+          <div id="levelList"></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div class="card">
+            <h3 style="margin-bottom:14px">Milestone Badges</h3>
+            <div class="badges-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px" id="badgesGrid"></div>
+          </div>
+          <div class="card">
+            <h3 style="margin-bottom:12px">This Week's Streak</h3>
+            <div class="streak-days" id="streakDaysRow"></div>
+            <div style="font-size:0.78rem;color:var(--muted);margin-top:8px">Log today to extend your 🔥 streak and earn +15 XP</div>
+          </div>
+          <div class="card" id="achXPSummary"></div>
+        </div>
+      </div>
+    </div>
+
+  </main><!-- /main-content -->
+</div><!-- /app-shell -->
+
+<script src="js/db.js"></script>
+<script src="js/dashboard.js"></script>
+<script>
+  function toggleSidebar() {
+    document.getElementById('sidebarEl').classList.toggle('open');
+    document.getElementById('sidebarBackdrop').classList.toggle('open');
+  }
+  function closeSidebar() {
+    document.getElementById('sidebarEl').classList.remove('open');
+    document.getElementById('sidebarBackdrop').classList.remove('open');
+  }
+  // Auto-close the mobile sidebar whenever a nav item is tapped
+  document.querySelectorAll('.nav-item').forEach(function (item) {
+    item.addEventListener('click', closeSidebar);
+  });
+</script>
+</body>
+</html>

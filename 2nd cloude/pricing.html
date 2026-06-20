@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pricing — WealthFlow</title>
+  <link rel="stylesheet" href="css/global.css"/>
+  <link rel="stylesheet" href="css/pages.css"/>
+</head>
+<body>
+
+<!-- NAV -->
+<nav style="position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(10,13,20,0.9);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)">
+  <div style="max-width:1100px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;gap:16px">
+    <a href="index.html" style="display:flex;align-items:center;gap:8px;font-family:var(--font-display);font-weight:700;font-size:1rem">
+      <div style="width:28px;height:28px;border-radius:7px;background:var(--grad-primary);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:0.85rem">W</div>
+      WealthFlow
+    </a>
+    <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+      <a href="index.html" class="btn btn-ghost btn-sm">← Home</a>
+      <a href="dashboard.html" class="btn btn-primary btn-sm">Open App →</a>
+    </div>
+  </div>
+</nav>
+
+<div class="pricing-page">
+  <!-- HERO -->
+  <div class="pricing-hero">
+    <div class="eyebrow">SIMPLE PRICING</div>
+    <h1>Start free.<br><span class="gradient-text">Upgrade when ready.</span></h1>
+    <p>Everything students need to take control of their finances — most of it free, always.</p>
+    <div class="billing-toggle" onclick="toggleBilling()">
+      <span id="monthlyLabel" style="font-size:0.875rem;color:var(--text)">Monthly</span>
+      <div class="toggle-switch" id="billingToggle"><div class="toggle-knob"></div></div>
+      <span id="annualLabel" style="font-size:0.875rem;color:var(--muted)">Annual</span>
+      <span class="save-badge">Save 25%</span>
+    </div>
+  </div>
+
+  <!-- PLANS -->
+  <div class="pricing-grid">
+
+    <!-- FREE -->
+    <div class="pricing-card">
+      <div class="plan-name">Free</div>
+      <div class="plan-price">GHS 0<span>/forever</span></div>
+      <div class="plan-desc">For students just getting started. No card needed.</div>
+      <div class="plan-divider"></div>
+      <div class="plan-features">
+        <div class="plan-feature included"><div class="pf-check pf-yes">✓</div>Smart Financial Dashboard</div>
+        <div class="plan-feature included"><div class="pf-check pf-yes">✓</div>10-Second Expense Logger</div>
+        <div class="plan-feature included"><div class="pf-check pf-yes">✓</div>Basic Budget Planner</div>
+        <div class="plan-feature included"><div class="pf-check pf-yes">✓</div>Savings Goals (up to 2)</div>
+        <div class="plan-feature included"><div class="pf-check pf-yes">✓</div>Allowance Survival Predictor</div>
+        <div class="plan-feature included"><div class="pf-check pf-yes">✓</div>Financial Calendar</div>
+        <div class="plan-feature included"><div class="pf-check pf-yes">✓</div>Gamification &amp; Streaks</div>
+        <div class="plan-feature included"><div class="pf-check pf-yes">✓</div>Opportunity Hub (browse)</div>
+        <div class="plan-feature"><div class="pf-check pf-no">–</div>AI Financial Coach</div>
+        <div class="plan-feature"><div class="pf-check pf-no">–</div>Opportunity Alerts</div>
+        <div class="plan-feature"><div class="pf-check pf-no">–</div>Advanced Analytics</div>
+      </div>
+      <a href="dashboard.html" class="btn btn-outline btn-full">Get Started Free →</a>
+    </div>
+
+    <!-- PREMIUM -->
+    <div class="pricing-card featured">
+      <div class="plan-name">Premium</div>
+      <div class="plan-price" id="premiumPrice">GHS 25<span id="premiumPer">/month</span></div>
+      <div class="plan-desc">The full WealthFlow experience for serious students.</div>
+      <div class="plan-divider"></div>
+      <div class="plan-features">
+        <div class="plan-feature included"><div class="pf-check pf-yes">✓</div>Everything in Free</div>
+        <div class="plan-feature included"><div class="pf-check pf-yes">✓</div><strong>AI Financial Coach</strong> (unlimited)</div>
+        <div class="plan-feature included"><div class="pf-check pf-yes">✓</div>AI Opportunity Discovery</div>
+        <div class="plan-feature included"><div class="pf-check pf-yes">✓</div>Personalized Opportunity Alerts</div>
+        <div class="plan-feature included"><div class="pf-check pf-yes">✓</div>Unlimited Savings Goals</div>
+        <div class="plan-feature included"><div class="pf-check pf-yes">✓</div>Advanced Spending Analytics</div>
+        <div class="plan-feature included"><div class="pf-check pf-yes">✓</div>Predictive Spending Forecasts</div>
+        <div class="plan-feature included"><div class="pf-check pf-yes">✓</div>Balance Reconciliation Engine</div>
+        <div class="plan-feature included"><div class="pf-check pf-yes">✓</div>Weekly AI Financial Report</div>
+        <div class="plan-feature included"><div class="pf-check pf-yes">✓</div>Priority Support</div>
+      </div>
+      <a href="auth.html?mode=signup" class="btn btn-primary btn-full">Start Premium →</a>
+    </div>
+
+    <!-- ENTERPRISE -->
+    <div class="pricing-card">
+      <div class="plan-name">Enterprise</div>
+      <div class="plan-price">Custom<span></span></div>
+      <div class="plan-desc">For universities, banks, and NGOs serving students.</div>
+      <div class="plan-divider"></div>
+      <div class="plan-features">
+        <div class="plan-feature included"><div class="pf-check pf-yes">✓</div>Everything in Premium</div>
+        <div class="plan-feature included"><div class="pf-check pf-yes">✓</div>Institutional Dashboard</div>
+        <div class="plan-feature included"><div class="pf-check pf-yes">✓</div>Anonymized Student Analytics</div>
+        <div class="plan-feature included"><div class="pf-check pf-yes">✓</div>White-label Option</div>
+        <div class="plan-feature included"><div class="pf-check pf-yes">✓</div>Scholarship/Grant Integration</div>
+        <div class="plan-feature included"><div class="pf-check pf-yes">✓</div>API Access</div>
+        <div class="plan-feature included"><div class="pf-check pf-yes">✓</div>Dedicated Account Manager</div>
+        <div class="plan-feature included"><div class="pf-check pf-yes">✓</div>SLA &amp; Compliance</div>
+        <div class="plan-feature included"><div class="pf-check pf-yes">✓</div>Unlimited Users</div>
+        <div class="plan-feature included"><div class="pf-check pf-yes">✓</div>Custom Onboarding</div>
+      </div>
+      <a href="mailto:hello@wealthflow.co" class="btn btn-outline btn-full">Contact Us →</a>
+    </div>
+
+  </div>
+
+  <!-- FAQ -->
+  <div class="faq-wrap">
+    <h2>Common Questions</h2>
+    <details>
+      <summary>Is WealthFlow really free? <span>+</span></summary>
+      <p>Yes — the Free plan is genuinely free forever. You get the full dashboard, expense logger, budget planner, survival predictor, gamification, and the opportunity hub. No credit card needed, ever.</p>
+    </details>
+    <details>
+      <summary>Is my financial data safe? <span>+</span></summary>
+      <p>Your data is stored securely in your browser's local storage and optionally in the cloud. We never sell personal data to third parties, and you can delete your account and all data at any time.</p>
+    </details>
+    <details>
+      <summary>Can I cancel Premium anytime? <span>+</span></summary>
+      <p>Yes. Cancel any time with no questions asked. You'll keep Premium access until the end of your billing period, then automatically return to the Free plan.</p>
+    </details>
+    <details>
+      <summary>Does WealthFlow work outside Ghana? <span>+</span></summary>
+      <p>Yes! All the financial tools work for any African student. The platform is optimized for Ghanaian students (GHS currency, local scholarships), but we're expanding to more countries soon.</p>
+    </details>
+    <details>
+      <summary>What is the AI Financial Coach? <span>+</span></summary>
+      <p>It's a conversational AI powered by Claude (Anthropic) that knows your real financial data — your balance, spending patterns, streak, and goals. You can ask it anything: "Can I afford a new phone?" or "How do I save faster?" and it gives personalized, math-backed answers.</p>
+    </details>
+  </div>
+
+  <!-- CTA -->
+  <div style="text-align:center;padding:60px 24px;background:var(--surface);border-top:1px solid var(--border)">
+    <h2 style="margin-bottom:12px">Ready to take control?</h2>
+    <p style="color:var(--muted);margin-bottom:28px">Join thousands of African students managing their money smarter.</p>
+    <a href="dashboard.html" class="btn btn-primary btn-lg">Open WealthFlow Free →</a>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>© 2025 WealthFlow · Built for African Students ·
+      <a href="opportunities.html">Opportunities</a> ·
+      <a href="auth.html">Sign Up</a>
+    </p>
+  </footer>
+</div>
+
+<script>
+  let annual = false;
+  function toggleBilling() {
+    annual = !annual;
+    document.getElementById('billingToggle').classList.toggle('on', annual);
+    document.getElementById('premiumPrice').childNodes[0].textContent = annual ? 'GHS 225' : 'GHS 25';
+    document.getElementById('premiumPer').textContent = annual ? '/year' : '/month';
+    document.getElementById('monthlyLabel').style.color = annual ? 'var(--muted)' : 'var(--text)';
+    document.getElementById('annualLabel').style.color  = annual ? 'var(--text)' : 'var(--muted)';
+  }
+</script>
+</body>
+</html>
