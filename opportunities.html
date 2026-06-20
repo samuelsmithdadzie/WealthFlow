@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Opportunities — WealthFlow</title>
+  <link rel="stylesheet" href="css/global.css"/>
+  <link rel="stylesheet" href="css/pages.css"/>
+</head>
+<body>
+
+<!-- NAV -->
+<nav style="position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(10,13,20,0.9);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)">
+  <div style="max-width:1100px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;gap:16px">
+    <a href="index.html" style="display:flex;align-items:center;gap:8px;font-family:var(--font-display);font-weight:700;font-size:1rem">
+      <div style="width:28px;height:28px;border-radius:7px;background:var(--grad-primary);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:0.85rem">W</div>
+      WealthFlow
+    </a>
+    <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+      <a href="dashboard.html" class="btn btn-ghost btn-sm">Dashboard</a>
+      <a href="auth.html" class="btn btn-outline btn-sm">Log In</a>
+      <a href="dashboard.html" class="btn btn-primary btn-sm">Open App →</a>
+    </div>
+  </div>
+</nav>
+
+<div class="opp-page">
+  <!-- HEADER -->
+  <div class="opp-header">
+    <div class="opp-header-inner">
+      <h1>Opportunity Hub 🔍</h1>
+      <p class="opp-header-sub" id="oppCount">12 opportunities · Scholarships, internships, grants &amp; jobs for African students</p>
+      <div class="opp-search-row">
+        <div class="opp-search-wrap">
+          <span style="color:var(--faint)">🔍</span>
+          <input type="text" id="oppSearch" placeholder="Search by keyword, field, or location..." oninput="filterOpps()"/>
+        </div>
+      </div>
+      <div class="opp-filters">
+        <button class="pill active" data-filter="all"          onclick="setFilter('all',this)">All</button>
+        <button class="pill" data-filter="scholarship"         onclick="setFilter('scholarship',this)">🎓 Scholarships</button>
+        <button class="pill" data-filter="internship"          onclick="setFilter('internship',this)">💼 Internships</button>
+        <button class="pill" data-filter="grant"               onclick="setFilter('grant',this)">💰 Grants</button>
+        <button class="pill" data-filter="job"                 onclick="setFilter('job',this)">🛠️ Jobs</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div style="max-width:1100px;margin:0 auto;padding:24px">
+
+    <!-- AI SEARCH BANNER -->
+    <div class="ai-search-banner">
+      <div class="ai-icon">🤖</div>
+      <div style="flex:1;min-width:180px">
+        <h3>AI Opportunity Search</h3>
+        <p>Describe what you're looking for and let AI find the best matches.</p>
+      </div>
+      <div class="ai-search-row">
+        <input type="text" class="input-field" id="aiSearchInput"
+          placeholder='e.g. "biotech internships in Ghana open now"'
+          onkeydown="if(event.key==='Enter')runAiSearch()"/>
+        <button class="btn btn-primary" id="aiSearchBtn" onclick="runAiSearch()">Search AI →</button>
+      </div>
+    </div>
+
+    <!-- AI RESULT -->
+    <div class="ai-result" id="aiResult">
+      <span style="font-size:1.2rem;flex-shrink:0">🤖</span>
+      <div id="aiResultText" style="font-size:0.875rem;color:var(--text);line-height:1.65;white-space:pre-wrap"></div>
+    </div>
+
+    <!-- GRID -->
+    <div class="opp-grid" id="oppGrid"></div>
+    <div id="noResults" style="display:none;text-align:center;padding:60px;color:var(--muted)">
+      <div style="font-size:3rem;margin-bottom:12px">🔍</div>
+      <h3>No opportunities found</h3>
+      <p>Try adjusting your filters or search query.</p>
+    </div>
+  </div>
+</div>
+
+<script src="../js/db.js"></script>
+<script>
+  let currentFilter = 'all';
+  let currentSearch = '';
+
+  function setFilter(type, el) {
+    currentFilter = type;
+    document.querySelectorAll('.opp-filters .pill').forEach(p => p.classList.remove('active'));
+    el.classList.add('active');
+    renderOpps();
+  }
+
+  function filterOpps() {
+    currentSearch = document.getElementById('oppSearch').value;
+    renderOpps();
+  }
+
+  function renderOpps() {
+    const list = Opportunities.filter(currentFilter, currentSearch);
+    const grid = document.getElementById('oppGrid');
+    const none = document.getElementById('noResults');
+
+    if (!list.length) {
+      grid.innerHTML = '';
+      none.style.display = 'block';
+      document.getElementById('oppCount').textContent = '0 results found';
+      return;
+    }
+    none.style.display = 'none';
+    document.getElementById('oppCount').textContent =
+      list.length + ' opportunit' + (list.length === 1 ? 'y' : 'ies') + ' · Scholarships, internships, grants & jobs';
+
+    grid.innerHTML = list.map(o => `
+      <div class="opp-card">
+        <div class="opp-top">
+          <div class="opp-logo">${o.logo}</div>
+          <div style="flex:1">
+            <div class="opp-title">${o.title}</div>
+            <div class="opp-org">${o.org}</div>
+          </div>
+          <span class="tag tag-${o.type}">${o.type}</span>
+        </div>
+        <div class="opp-desc">${o.desc}</div>
+        <div class="opp-meta">
+          <span>📍 ${o.location}</span>
+          <span>🏷️ ${o.field}</span>
+          <span>💰 ${o.amount}</span>
+          <span class="opp-deadline ${o.urgent?'urgent':''}">⏰ ${o.deadline}${o.urgent?' — Closing Soon!':''}</span>
+        </div>
+        <div class="opp-actions">
+          <button class="btn btn-primary btn-sm" onclick="applyOpp('${o.id}','${o.title.replace(/'/g,"\\'")}')">Apply Now →</button>
+          <button class="btn btn-outline btn-sm" onclick="saveOpp('${o.title.replace(/'/g,"\\'")}')">🔖 Save</button>
+        </div>
+      </div>`).join('');
+  }
+
+  function applyOpp(id, title) {
+    const result = Opportunities.trackApplication(id);
+    if (result.newBadge) UI.showToast('🔍 Opportunity Hunter badge earned! +40 XP');
+    else UI.showToast('Application for "' + title + '" tracked! +20 XP 🎯');
+  }
+
+  function saveOpp(title) {
+    UI.showToast('"' + title + '" saved to your list! 🔖');
+  }
+
+  async function runAiSearch() {
+    const query = document.getElementById('aiSearchInput').value.trim();
+    if (!query) return;
+
+    const resultBox  = document.getElementById('aiResult');
+    const resultText = document.getElementById('aiResultText');
+    const btn        = document.getElementById('aiSearchBtn');
+
+    resultBox.classList.add('visible');
+    resultText.innerHTML = '<div class="loading-dots"><span></span><span></span><span></span></div> AI is searching...';
+    btn.disabled = true;
+
+    try {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-6',
+          max_tokens: 1000,
+          system: `You are WealthFlow's Opportunity Assistant for Ghanaian and African university students.
+When a student searches for opportunities, provide 2-3 specific, real suggestions with:
+- Organization name and opportunity type
+- Why it matches their query
+- Approximate deadline or timing
+- How to apply (brief guidance)
+Be concise (under 180 words), encouraging, and specific. Use bullet points.`,
+          messages: [{ role: 'user', content: query }]
+        })
+      });
+      const data  = await res.json();
+      const reply = data.content?.[0]?.text || 'No results found. Try a different search.';
+      resultText.textContent = reply;
+    } catch(e) {
+      resultText.textContent = '⚠️ Connection issue. Please check your internet and try again.';
+    }
+    btn.disabled = false;
+  }
+
+  // Init
+  renderOpps();
+</script>
+</body>
+</html>
